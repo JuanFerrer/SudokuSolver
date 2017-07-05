@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Sudoku solver</title>
+  <link rel="stylesheet" type="text/css" href="styles/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+
+<body>
+
+  <div id="sudoku">
+    <!-- First row -->
+    <div id="top-left" class="container-square">
+      <div id="000" class="square row1 left">A</div>
+      <div id="001" class="square row1 mid">B</div>
+      <div id="002" class="square row1 right">C</div>
+
+      <div id="010" class="square row2 left">D</div>
+      <div id="011" class="square row2 mid">E</div>
+      <div id="012" class="square row2 right">F</div>
+
+      <div id="020" class="square row3 left">G</div>
+      <div id="021" class="square row3 mid">H</div>
+      <div id="022" class="square row3 right">I</div>
+    </div>
+    <div id="top" class="container-square">
+      <div id="100" class="square row1 left">A</div>
+      <div id="101" class="square row1 mid">B</div>
+      <div id="102" class="square row1 right">C</div>
+
+      <div id="110" class="square row2 left">D</div>
+      <div id="111" class="square row2 mid">E</div>
+      <div id="112" class="square row2 right">F</div>
+
+      <div id="120" class="square row3 left">G</div>
+      <div id="121" class="square row3 mid">H</div>
+      <div id="122" class="square row3 right">I</div>
+    </div>
+    <div id="top-right" class="container-square">
+      <div id="200" class="square row1 left">A</div>
+      <div id="201" class="square row1 mid">B</div>
+      <div id="202" class="square row1 right">C</div>
+
+      <div id="210" class="square row2 left">D</div>
+      <div id="211" class="square row2 mid">E</div>
+      <div id="212" class="square row2 right">F</div>
+
+      <div id="220" class="square row3 left">G</div>
+      <div id="221" class="square row3 mid">H</div>
+      <div id="222" class="square row3 right">I</div>
+    </div>
+
+
+    <!-- Second row -->
+    <div id="left" class="container-square">
+      <div id="300" class="square row1 left">A</div>
+      <div id="301" class="square row1 mid">B</div>
+      <div id="302" class="square row1 right">C</div>
+
+      <div id="310" class="square row2 left">D</div>
+      <div id="311" class="square row2 mid">E</div>
+      <div id="312" class="square row2 right">F</div>
+
+      <div id="320" class="square row3 left">G</div>
+      <div id="321" class="square row3 mid">H</div>
+      <div id="322" class="square row3 right">I</div>
+    </div>
+    <div id="center" class="container-square">
+      <div id="400" class="square row1 left">A</div>
+      <div id="401" class="square row1 mid">B</div>
+      <div id="402" class="square row1 right">C</div>
+
+      <div id="410" class="square row2 left">D</div>
+      <div id="411" class="square row2 mid">E</div>
+      <div id="412" class="square row2 right">F</div>
+
+      <div id="420" class="square row3 left">G</div>
+      <div id="421" class="square row3 mid">H</div>
+      <div id="422" class="square row3 right">I</div>
+    </div>
+    <div id="right" class="container-square">
+      <div id="500" class="square row1 left">A</div>
+      <div id="501" class="square row1 mid">B</div>
+      <div id="502" class="square row1 right">C</div>
+
+      <div id="510" class="square row2 left">D</div>
+      <div id="511" class="square row2 mid">E</div>
+      <div id="512" class="square row2 right">F</div>
+
+      <div id="520" class="square row3 left">G</div>
+      <div id="521" class="square row3 mid">H</div>
+      <div id="522" class="square row3 right">I</div>
+    </div>
+
+
+    <!-- Third row -->
+    <div id="bottom-left" class="container-square">
+      <div id="600" class="square row1 left">A</div>
+      <div id="601" class="square row1 mid">B</div>
+      <div id="602" class="square row1 right">C</div>
+
+      <div id="610" class="square row2 left">D</div>
+      <div id="611" class="square row2 mid">E</div>
+      <div id="612" class="square row2 right">F</div>
+
+      <div id="620" class="square row3 left">G</div>
+      <div id="621" class="square row3 mid">H</div>
+      <div id="622" class="square row3 right">I</div>
+    </div>
+    <div id="bottom" class="container-square">
+      <div id="700" class="square row1 left">A</div>
+      <div id="701" class="square row1 mid">B</div>
+      <div id="702" class="square row1 right">C</div>
+
+      <div id="710" class="square row2 left">D</div>
+      <div id="711" class="square row2 mid">E</div>
+      <div id="712" class="square row2 right">F</div>
+
+      <div id="720" class="square row3 left">G</div>
+      <div id="721" class="square row3 mid">H</div>
+      <div id="722" class="square row3 right">I</div>
+    </div>
+    <div id="bottom-right" class="container-square">
+      <div id="800" class="square row1 left">A</div>
+      <div id="801" class="square row1 mid">B</div>
+      <div id="802" class="square row1 right">C</div>
+
+      <div id="810" class="square row2 left">D</div>
+      <div id="811" class="square row2 mid">E</div>
+      <div id="812" class="square row2 right">F</div>
+
+      <div id="820" class="square row3 left">G</div>
+      <div id="821" class="square row3 mid">H</div>
+      <div id="822" class="square row3 right">I</div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="js/index.js"></script>
+</body>
+
+</html>

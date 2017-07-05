@@ -1,0 +1,47 @@
+body {
+    /* Do this to remove spacing */
+    font-size: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+}
+
+#sudoku {
+    height: 350px;
+    width: 350px;
+}
+
+.container-square {
+    /* Do this to remove spacing */
+    font-size: 0;
+    top: 10px;
+    left: 10px;
+    height: 33%;
+    width: 33%;
+    display: inline-block;
+}
+
+.square {
+    padding: 10px, 10px, 10px, 10px;
+    font-size: 25px;
+    border: none;
+    color: #333333;
+    height: 33%;
+    width: 33%;
+    text-align: center;
+    line-height: 1.5;
+    display: inline-block;
+    transition: all;
+    transition-duration: 0.3s;
+    border-radius: 10px;
+}
+
+.square.ui-selected {
+    background: #F39814;
+    color: #FFFFFF;
+}
+
+.square:hover {
+    text-shadow: 0 0 .9px #333, 0 0 .9px #333, 0 0 .9px #333;
+    color: #111111;
+}
