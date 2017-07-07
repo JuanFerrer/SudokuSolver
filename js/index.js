@@ -50,3 +50,30 @@ document.addEventListener("keydown", function (e) {
         })
     }
 })
+
+function checkBoard() {
+    var cols = [];
+    var rows = [];
+    for (var i = 0; i < 9; ++i) {
+        console.log("row" + i);
+        rows = $(".row" + i).toArray();
+        for (var j = 0; j < 9; ++j) {
+            console.log(rows[i].innerHTML + " == " + rows[j].innerHTML);
+            if (rows[i].innerHTML === rows[j].innerHTML) {
+                rows[i].classList.add("conflict");
+                rows[j].classList.add("conflict");
+            }
+        }
+    }
+    for (var i = 0; i < 9; ++i) {
+        console.log("col" + i);
+        cols = $(".col" + i).toArray();
+        for (var j = 0; j < 9; ++j) {
+            console.log(cols[i].innerHTML + " == " + cols[j].innerHTML);
+            if (cols[i].innerHTML === cols[j].innerHTML) {
+                cols[i].classList.add("conflict");
+                cols[j].classList.add("conflict");
+            }
+        }
+    }
+}
