@@ -51,29 +51,48 @@ document.addEventListener("keydown", function (e) {
     }
 })
 
+var emptyChar = "-";
+
 function checkBoard() {
+    $(".conflict").removeClass("conflict");
     var cols = [];
     var rows = [];
     for (var i = 0; i < 9; ++i) {
-        console.log("row" + i);
         rows = $(".row" + i).toArray();
         for (var j = 0; j < 9; ++j) {
-            console.log(rows[i].innerHTML + " == " + rows[j].innerHTML);
-            if (rows[i].innerHTML === rows[j].innerHTML) {
-                rows[i].classList.add("conflict");
-                rows[j].classList.add("conflict");
+            for (var k = 0; k < 9; ++k) {
+                // console.log(rows[k].innerHTML + "===" + rows[j].innerHTML);
+                if (rows[j].innerHTML === rows[k].innerHTML
+                    && rows[j].innerHTML !== emptyChar
+                    && rows[k].innerHTML !== emptyChar
+                    && j !== k) {
+                    rows[j].classList.add("conflict");
+                    rows[k].classList.add("conflict");
+                }
+            }
+        }
+        cols = $(".col" + i).toArray();
+        for (j = 0; j < 9; ++j) {
+            for (k = 0; k < 9; ++k) {
+                if (cols[j].innerHTML === cols[k].innerHTML
+                    && cols[j].innerHTML !== emptyChar
+                    && cols[k].innerHTML !== emptyChar
+                    && j !== k) {
+                    cols[j].classList.add("conflict");
+                    cols[k].classList.add("conflict");
+                }
             }
         }
     }
+}
+
+var p = "003020600900305001001806400008102900700000008006708200002609500800203009005010300".replace(/0/g, emptyChar);
+
+function clearBoard() {
+    //$(".square").html(emptyChar);
+    var num = 0;
+    //$(".square").html(function () { return p[num++]; });
     for (var i = 0; i < 9; ++i) {
-        console.log("col" + i);
-        cols = $(".col" + i).toArray();
-        for (var j = 0; j < 9; ++j) {
-            console.log(cols[i].innerHTML + " == " + cols[j].innerHTML);
-            if (cols[i].innerHTML === cols[j].innerHTML) {
-                cols[i].classList.add("conflict");
-                cols[j].classList.add("conflict");
-            }
-        }
+        $(".row" + i).html(function () { return p[num++]; });
     }
 }
