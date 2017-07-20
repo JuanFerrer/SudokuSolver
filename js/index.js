@@ -1,3 +1,5 @@
+var emptyChar = " ";
+
 $(function () {
     $("#sudoku").selectable();
 });
@@ -41,7 +43,7 @@ document.addEventListener("keydown", function (e) {
                 num = "9";
                 break;
             default:
-                num = "-";
+                num = emptyChar;
                 break;
         }
         $(".square.ui-selected").each(function () {
@@ -50,8 +52,6 @@ document.addEventListener("keydown", function (e) {
         })
     }
 })
-
-var emptyChar = "-";
 
 function checkBoard() {
     $(".conflict").removeClass("conflict");
@@ -62,10 +62,10 @@ function checkBoard() {
         for (var j = 0; j < 9; ++j) {
             for (var k = 0; k < 9; ++k) {
                 // console.log(rows[k].innerHTML + "===" + rows[j].innerHTML);
-                if (rows[j].innerHTML === rows[k].innerHTML
-                    && rows[j].innerHTML !== emptyChar
-                    && rows[k].innerHTML !== emptyChar
-                    && j !== k) {
+                if (rows[j].innerHTML === rows[k].innerHTML &&
+                    rows[j].innerHTML !== emptyChar &&
+                    rows[k].innerHTML !== emptyChar &&
+                    j !== k) {
                     rows[j].classList.add("conflict");
                     rows[k].classList.add("conflict");
                 }
@@ -74,12 +74,26 @@ function checkBoard() {
         cols = $(".col" + i).toArray();
         for (j = 0; j < 9; ++j) {
             for (k = 0; k < 9; ++k) {
-                if (cols[j].innerHTML === cols[k].innerHTML
-                    && cols[j].innerHTML !== emptyChar
-                    && cols[k].innerHTML !== emptyChar
-                    && j !== k) {
+                if (cols[j].innerHTML === cols[k].innerHTML &&
+                    cols[j].innerHTML !== emptyChar &&
+                    cols[k].innerHTML !== emptyChar &&
+                    j !== k) {
                     cols[j].classList.add("conflict");
                     cols[k].classList.add("conflict");
+                }
+            }
+        }
+    }
+    var squares = [];
+    for (i = 0; i < 9; ++i) {
+        squares = $(".square" + i).children().toArray();
+        for (j = 0; j < 9; ++j) {
+            for (k = j + 1; k < 9; ++k) {
+                if (squares[j].innerHTML === squares[k].innerHTML &&
+                    squares[j].innerHTML !== emptyChar &&
+                    squares[k].innerHTML !== emptyChar) {
+                    squares[j].classList.add("conflict");
+                    squares[k].classList.add("conflict");
                 }
             }
         }
@@ -90,6 +104,7 @@ var p = "00302060090030500100180640000810290070000000800670820000260950080020300
 
 function clearBoard() {
     //$(".square").html(emptyChar);
+    $(".square").removeClass("conflict");
     var num = 0;
     //$(".square").html(function () { return p[num++]; });
     for (var i = 0; i < 9; ++i) {
