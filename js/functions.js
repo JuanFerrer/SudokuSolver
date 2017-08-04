@@ -57,6 +57,13 @@ function checkBoard() {
     }
 }
 
+function populateBoard() {
+    clearBoard();
+    for (var i = 0, num = 0; i < 9; ++i) {
+        $(".row" + i).html(function () { return p[num++]; });
+    }
+}
+
 /**
  * Clear the board
  */
@@ -65,7 +72,7 @@ function clearBoard() {
     $(".square").removeClass("conflict");
     //$(".square").html(function () { return p[num++]; });
     for (var i = 0, num = 0; i < 9; ++i) {
-        $(".row" + i).html(function () { return p[num++]; });
+        $(".row" + i).html(function () { return emptyChar; });
     }
 }
 

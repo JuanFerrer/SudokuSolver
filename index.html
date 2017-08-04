@@ -138,10 +138,14 @@
     </div>
   </div>
 
-  <input type="button" onclick="checkBoard()" value="Check" />
-  <input type="button" onclick="clearBoard()" value="Clear" />
-  <input type="button" onclick="solve()" value="Solve" />
-
+  <div class="button-container">
+    <div id="button-row">
+    <input type="button" onclick="checkBoard()" value="Check" />
+    <input type="button" onclick="clearBoard()" value="Clear" />
+    <input type="button" onclick="populateBoard()" value="Populate" />
+    <input type="button" onclick="solve()" value="Solve" />
+    </div>
+  </div>
   <script type="text/javascript" src="js/index.js"></script>
   <script type="text/javascript" src="js/functions.js"></script>
 </body>

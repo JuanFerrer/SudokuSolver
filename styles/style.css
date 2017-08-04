@@ -73,3 +73,17 @@ body {
     color: #FFFFFF;
     background-color: #F44336;
 }
+
+.button-container {
+    width: 350px;
+}
+
+#button-row {
+    text-align: center;
+}
+
+/* Buttons */
+input[type="button"] {
+    width: 70px;
+    padding: auto;
+}
