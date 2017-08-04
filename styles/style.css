@@ -16,34 +16,41 @@ body {
     font-size: 0;
     top: 10px;
     left: 10px;
-    height: 33%;
-    width: 33%;
+    height: 32%;
+    width: 32%;
+    border: 2px solid black;
+    margin-left: -2px;
+    margin-top: -2px;
     display: inline-block;
-    box-shadow: inset 0.5px 0.5px 0.5px 2px #9E9E9E;
     transition: all;
     transition-duration: 0.3s;
-    background-color: #DCEDC8;
+    background-color: #FFFFFF;
+    pointer-events: none;
 }
 
-.container-square:hover {
-    background-color: #8BC34A;
-}
 
+/*.container-square:hover {
+    background-color: #FFFFFF;
+}
+*/
 
 .square {
-    padding: 10px, 10px, 10px, 10px;
+    /*padding: 10px, 10px, 10px, 10px;*/
     font-size: 25px;
-    border: none;
+    border: 1px solid black;
     color: #424242;
     height: 33%;
-    width: 33%;
+    width: 32.4%;
+    margin-left: -1px;
+    margin-top: -1px;
     text-align: center;
     line-height: 1.5;
     display: inline-block;
     transition: all;
     transition-duration: 0.3s;
-    border-radius: 10px;
+    /*border-radius: 10px;*/
     vertical-align: top;
+    pointer-events: auto;
 }
 
 .square.ui-selecting {
@@ -57,10 +64,12 @@ body {
 }
 
 .square:hover {
-    text-shadow: 0 0 .9px #333, 0 0 .9px #333, 0 0 .9px #333;
-    color: #424242;
+    text-shadow: 0 0 .9px #333333, 0 0 .9px #333333, 0 0 .9px #333333;
+    color: #333333;
+    background-color: #FFB199;
 }
 
 .conflict {
+    color: #FFFFFF;
     background-color: #F44336;
 }
