@@ -1,4 +1,6 @@
 var emptyChar = " ";
+var conflictClass = "conflict";
+var fromSourceClass = "from-source";
 
 $(function () {
     $("#sudoku").selectable();

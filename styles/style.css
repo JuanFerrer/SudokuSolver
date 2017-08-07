@@ -9,6 +9,9 @@ body {
 #sudoku {
     height: 350px;
     width: 350px;
+    position: absolute;
+    top: 10px;
+    left: 90px;
 }
 
 .container-square {
@@ -75,15 +78,17 @@ body {
 }
 
 .button-container {
-    width: 350px;
+    height: 343px;
 }
 
-#button-row {
-    text-align: center;
+#button-col {
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 /* Buttons */
 input[type="button"] {
     width: 70px;
-    padding: auto;
 }
