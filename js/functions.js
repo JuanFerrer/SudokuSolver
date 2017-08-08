@@ -67,6 +67,9 @@ function hasConflict() {
     return false;
 }
 
+/**
+ * Check every possible 
+ */
 function bruteForceAlgorithm() {
     var index = 0;
     var numArray = [];
@@ -86,6 +89,10 @@ function bruteForceAlgorithm() {
             } else {
                 if (numArray[index] >= 9) {
                     isBack = true;
+                    if (index == 0) {
+                        endReached = true;
+                        console.log("No solution could be found");
+                    }
                 }
             }
         }
@@ -96,9 +103,13 @@ function bruteForceAlgorithm() {
             numArray[index] = 0;
             index = isBack ? index - 1 : index + 1
         }
+        // console.log("(" + String(Math.floor(index / 9)) + "," + String(index % 9) + ")");
     }
 }
 
+/**
+ * Read sudoku string from player to populate board
+ */
 function populateBoard() {
     var str = prompt("Paste the Sudoku string:", "");
     if (!str.match(/\D/i)) {
@@ -158,4 +169,32 @@ function solve() {
     } else {
         alert("Empty board. Can't solve that!");
     }
+}
+
+var array = [];
+array.length = 9 * 9;
+
+//http://www.norvig.com/sudoku.html
+//http://www.dos486.com/sudoku/index.shtml
+/** Better solution **/
+
+/**
+ * Return a object/dictionary with all the cells that can "see"
+ * (i.e. in a straight line, or in the same square) the the desired element
+ */
+function isPeer(c1, c2) {
+    var l = array.length;
+    var b = undefined; // Needs a value!
+    return (c1 / l == c2 / l)                                       // Same row
+        || (c1 % l == c2 % l)                                       // Same column
+        || (c1 / l / b == c2 / l / b && c1 % l / b == c2 % l / b)   //
+        || (c1 != c2)
+}
+
+function getPeers(index) {
+    var dict = {};
+    array.forEach(function (o, i) {
+        if (array[index] / length == o / array.length) {
+        }
+    })
 }
