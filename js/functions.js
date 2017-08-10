@@ -60,7 +60,7 @@ function checkBoard() {
     }
 }
 
-function hasConflict() {
+function hasConflictSlow() {
     checkBoard();
     if ($("." + conflictClass).toArray().length > 0)
         return true;
@@ -108,23 +108,31 @@ function bruteForceAlgorithm() {
 }
 
 /**
+ * Fill the board with the given sudoku string
+ * @param {string} sudokuString 
+ */
+function stringToBoard(sudokuString) {
+    p = sudokuString.replace(/0/g, emptyChar)
+    clearBoard();
+    for (var i = 0, num = 0; i < 9; ++i) {
+        $(".row" + i).html(function () {
+            // If the character going into the square is not emptyChar, add fromSourceClass
+            if (p[num] != emptyChar) {
+                $(".row" + i + ".col" + num % 9).addClass(fromSourceClass);
+            }
+            // Either way, return the character
+            return p[num++];
+        });
+    }
+}
+
+/**
  * Read sudoku string from player to populate board
  */
 function populateBoard() {
     var str = prompt("Paste the Sudoku string:", "");
     if (!str.match(/\D/i)) {
-        p = str.replace(/0/g, emptyChar)
-        clearBoard();
-        for (var i = 0, num = 0; i < 9; ++i) {
-            $(".row" + i).html(function () {
-                // If the character going into the square is not emptyChar, add fromSourceClass
-                if (p[num] != emptyChar) {
-                    $(".row" + i + ".col" + num % 9).addClass(fromSourceClass);
-                }
-                // Either way, return the character
-                return p[num++];
-            });
-        }
+        stringToBoard(str);
     } else {
         alert("Make sure the Sudoku string has the right format");
     }
@@ -165,36 +173,119 @@ function solve() {
             shouldSolve = true;
     });
     if (shouldSolve) {
-        bruteForceAlgorithm();
+        smarterBruteForceAlgorithm();
+        stringToBoard(array.map(x => x.value).join(""));
+        array = [];
     } else {
         alert("Empty board. Can't solve that!");
     }
 }
-
-var array = [];
-array.length = 9 * 9;
 
 //http://www.norvig.com/sudoku.html
 //http://www.dos486.com/sudoku/index.shtml
 /** Better solution **/
 
 /**
- * Return a object/dictionary with all the cells that can "see"
- * (i.e. in a straight line, or in the same square) the the desired element
+ * Check if two given cells can "see" (i.e. in a straight line,
+ * or in the same square) each other
  */
 function isPeer(c1, c2) {
-    var l = array.length;
-    var b = undefined; // Needs a value!
-    return (c1 / l == c2 / l)                                       // Same row
-        || (c1 % l == c2 % l)                                       // Same column
-        || (c1 / l / b == c2 / l / b && c1 % l / b == c2 % l / b)   //
-        || (c1 != c2)
+    var l = 9;
+    var b = 3; // Needs a value!
+    return (Math.floor(c1 / l) == Math.floor(c2 / l))           // Same row
+        || (c1 % l == c2 % l)                                   // Same column
+        || ((Math.floor(c1 / l / b) == Math.floor(c2 / l / b)   // Same square
+            && Math.floor(c1 % l / b) == Math.floor(c2 % l / b)))
+        && (c1 != c2)                                           // Not same cell
 }
 
+/**
+ * Return an array with all the cells that are peers of the
+ * desired element
+ */
 function getPeers(index) {
-    var dict = {};
+    var peers = [];
     array.forEach(function (o, i) {
-        if (array[index] / length == o / array.length) {
+        if (isPeer(index, i) && !array.includes(i)) {
+            peers.push(i);
         }
     })
+    return peers;
+}
+
+/**
+ * Check if the passed index has generated a coflict
+ * @param {number} index - It should always be the last number inserted in the sudoku
+ */
+function hasConflict(index) {
+    var peers = getPeers(index);
+    var peerValues = [];
+    peers.forEach(function (o, i) {
+        peerValues.push(Number(array[o].value));
+    });
+    return peerValues.countOcurrencesOf(array[index].value) > 1;
+}
+
+/**
+ * 
+ */
+class Cell {
+    /**
+     * 
+     * @param {number} value - Value of the cell taken from the array
+     * @param {number} index - Index in the array
+     */
+    constructor(value) {
+        this.numTried = 0;
+        this.value = value;
+        this.isFromSource = value != 0;
+    }
+};
+var array = [];
+function smarterBruteForceAlgorithm() {
+    var index = 0;
+    var endReached = false;
+    var isBack = false;
+
+    for (var i = 0; i < 9 * 9; ++i) {
+        var val = $(".col" + String(i % 9) + ".row" + String(Math.floor(i / 9))).html()
+        array.push(new Cell(Number(val != emptyChar ? val : 0)));
+    }
+    while (!endReached) {
+        if (array[index].value < 9 && !array[index].isFromSource) {
+            array[index].value = ++array[index].numTried;
+
+            if (!hasConflict(index)) {
+                index++;
+                if (index == array.length)
+                    endReached = true;
+                isBack = false;
+            } else {
+                if (array[index].numTried >= 9) {
+                    isBack = true;
+                    if (index == 0) {
+                        endReached = true;
+                        console.log("No solution could be found");
+                    }
+                }
+            }
+        } else {
+            if (!array[index].isFromSource) {
+                array[index].value = 0;
+            }
+            array[index].numTried = 0;
+            index = isBack ? index - 1 : index + 1
+        }
+    }
+}
+
+/**
+ * Check if the array has duplicates
+ */
+if (!Array.prototype.countOcurrencesOf) {
+    Array.prototype.countOcurrencesOf = function (search) {
+        return this.reduce(function (n, val) {
+            return n + (val === search);
+        }, 0);
+    }
 }
