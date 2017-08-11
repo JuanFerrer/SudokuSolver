@@ -89,6 +89,7 @@ body {
 }
 
 /* Buttons */
+/* https://tympanus.net/Development/CreativeLinkEffects/ */
 input[type="button"] {
     width: 70px;
 }

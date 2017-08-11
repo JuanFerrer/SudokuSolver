@@ -60,53 +60,6 @@ function checkBoard() {
     }
 }
 
-function hasConflictSlow() {
-    checkBoard();
-    if ($("." + conflictClass).toArray().length > 0)
-        return true;
-    return false;
-}
-
-/**
- * Check every possible 
- */
-function bruteForceAlgorithm() {
-    var index = 0;
-    var numArray = [];
-    numArray.length = 9 * 9;
-    numArray.fill(0);
-    var endReached = false;
-    var isBack = false;
-    while (!endReached) {
-        if (numArray[index] < 9 && !$(".col" + String(index % 9) + ".row" + String(Math.floor(index / 9))).hasClass(fromSourceClass)) {
-            $(".col" + String(index % 9) + ".row" + String(Math.floor(index / 9))).html(++numArray[index]);
-
-            if (!hasConflict()) {
-                index++;
-                if (index == numArray.length)
-                    endReached = true;
-                isBack = false;
-            } else {
-                if (numArray[index] >= 9) {
-                    isBack = true;
-                    if (index == 0) {
-                        endReached = true;
-                        console.log("No solution could be found");
-                    }
-                }
-            }
-        }
-        else {
-            if (!$(".col" + String(index % 9) + ".row" + String(Math.floor(index / 9))).hasClass(fromSourceClass)) {
-                $(".col" + String(index % 9) + ".row" + String(Math.floor(index / 9))).html(emptyChar);
-            }
-            numArray[index] = 0;
-            index = isBack ? index - 1 : index + 1
-        }
-        // console.log("(" + String(Math.floor(index / 9)) + "," + String(index % 9) + ")");
-    }
-}
-
 /**
  * Fill the board with the given sudoku string
  * @param {string} sudokuString 
@@ -176,6 +129,7 @@ function solve() {
         smarterBruteForceAlgorithm();
         stringToBoard(array.map(x => x.value).join(""));
         array = [];
+        array.length = 0;
     } else {
         alert("Empty board. Can't solve that!");
     }
@@ -241,7 +195,13 @@ class Cell {
         this.isFromSource = value != 0;
     }
 };
+
+
 var array = [];
+
+/**
+ * Check every possible value
+ */
 function smarterBruteForceAlgorithm() {
     var index = 0;
     var endReached = false;
@@ -252,12 +212,15 @@ function smarterBruteForceAlgorithm() {
         array.push(new Cell(Number(val != emptyChar ? val : 0)));
     }
     while (!endReached) {
-        if (array[index].value < 9 && !array[index].isFromSource) {
+        if (index > array.length - 1) {
+            endReached = true;
+        }
+        else if (array[index].value < 9 && !array[index].isFromSource) {
             array[index].value = ++array[index].numTried;
 
             if (!hasConflict(index)) {
                 index++;
-                if (index == array.length)
+                if (index == array.length - 1)
                     endReached = true;
                 isBack = false;
             } else {
