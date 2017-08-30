@@ -1,3 +1,5 @@
+let array = [];
+
 /**
  * Deselect all
  */
@@ -12,50 +14,51 @@ function clearSelection() {
  */
 function checkBoard() {
     $('.' + conflictClass).removeClass(conflictClass);
-    var cols = [];
-    var rows = [];
+    let cols = [];
+    let rows = [];
     // Check for duplicates in the current row
-    for (var i = 0; i < 9; ++i) {
-        rows = $('.row' + i).toArray();
-        for (var j = 0; j < 9; ++j) {
-            for (var k = 0; k < 9; ++k) {
-                if (rows[j].innerHTML === rows[k].innerHTML &&
-                    rows[j].innerHTML !== emptyChar &&
-                    rows[k].innerHTML !== emptyChar &&
+    for (let i = 0; i < 9; ++i) {
+        rows = $(`.row${i}`).toArray();
+        rows.forEach((j) => {
+            rows.forEach((k) => {
+                if (j.innerHTML === k.innerHTML &&
+                    j.innerHTML !== emptyChar &&
+                    k.innerHTML !== emptyChar &&
                     j !== k) {
-                    rows[j].classList.add(conflictClass);
-                    rows[k].classList.add(conflictClass);
+                    j.classList.add(conflictClass);
+                    k.classList.add(conflictClass);
                 }
-            }
-        }
+            })
+        })
         // Check for duplicates in the current column
-        cols = $('.col' + i).toArray();
-        for (j = 0; j < 9; ++j) {
-            for (k = 0; k < 9; ++k) {
-                if (cols[j].innerHTML === cols[k].innerHTML &&
-                    cols[j].innerHTML !== emptyChar &&
-                    cols[k].innerHTML !== emptyChar &&
+        cols = $(`.col${i}`).toArray();
+        cols.forEach((j) => {
+            cols.forEach((k) => {
+                if (j.innerHTML === k.innerHTML &&
+                    j.innerHTML !== emptyChar &&
+                    k.innerHTML !== emptyChar &&
                     j !== k) {
-                    cols[j].classList.add(conflictClass);
-                    cols[k].classList.add(conflictClass);
+                    j.classList.add(conflictClass);
+                    k.classList.add(conflictClass);
                 }
-            }
-        }
+            })
+        })
     }
     // Check for duplicates in the current square container
-    var squares = [];
+    let squares = [];
     for (i = 0; i < 9; ++i) {
-        squares = $('.square' + i).children().toArray();
-        for (j = 0; j < 9; ++j) {
-            for (k = j + 1; k < 9; ++k) {
-                if (squares[j].innerHTML === squares[k].innerHTML &&
-                    squares[j].innerHTML !== emptyChar &&
-                    squares[k].innerHTML !== emptyChar) {
-                    squares[j].classList.add(conflictClass);
-                    squares[k].classList.add(conflictClass);
+        squares = $(`.square${i}`).children().toArray();
+        squares.forEach((j) => {
+            squares.forEach((k) => {
+                if (j.innerHTML === k.innerHTML &&
+                    j.innerHTML !== emptyChar &&
+                    k.innerHTML !== emptyChar &&
+                    j !== k) {
+                    j.classList.add(conflictClass);
+                    k.classList.add(conflictClass);
                 }
-            }
-        }
+            })
+        })
     }
 }
 
@@ -63,14 +66,15 @@ function checkBoard() {
  * Fill the board with the given sudoku string
  * @param {string} sudokuString 
  */
-function stringToBoard(sudokuString) {
+function stringToBoard(sudokuString, fromUser = true) {
     p = sudokuString.replace(/0/g, emptyChar)
-    clearBoard();
     for (var i = 0, num = 0; i < 9; ++i) {
         $(`.row${i}`).html(function () {
             // If the character going into the square is not emptyChar, add fromSourceClass
-            if (p[num] != emptyChar) {
-                $(`.row${i}.col${num % 9}`).addClass(fromSourceClass);
+            if (fromUser) {
+                if (p[num] != emptyChar) {
+                    $(`.row${i}.col${num % 9}`).addClass(fromSourceClass);
+                }
             }
             // Either way, return the character
             return p[num++];
@@ -82,8 +86,8 @@ function stringToBoard(sudokuString) {
  * Read sudoku string from player to populate board
  */
 function populateBoard() {
-    var str = prompt('Paste the Sudoku string:', '');
-    if (!str.match(/\D/i)) {
+    let str = prompt('Paste the Sudoku string:', '');
+    if (str !== '' && str !== null && !str.match(/\D/i)) {
         stringToBoard(str);
     } else {
         alert('Make sure the Sudoku string has the right format');
@@ -97,7 +101,7 @@ function populateBoard() {
 function clearBoard() {
     $('.square').removeClass(conflictClass);
     $('.square').removeClass(fromSourceClass);
-    for (var i = 0; i < 9; ++i) {
+    for (let i = 0; i < 9; ++i) {
         $(`.row${i}`).html(function () { return emptyChar; });
     }
 }
@@ -107,7 +111,7 @@ function clearBoard() {
  */
 function resetBoard() {
     $('.square').removeClass(conflictClass);
-    for (var i = 0; i < 9; ++i) {
+    for (let i = 0; i < 9; ++i) {
         $(`.row${i}:not(.${fromSourceClass})`).html(function () { return emptyChar; });
     }
 }
@@ -119,14 +123,15 @@ function solve() {
     // First reset
     resetBoard();
     // Return if board is empty
-    var shouldSolve;
+    let shouldSolve = false;
     $('.square').each(function (i, obj) {
-        if (obj.innerHTML != emptyChar)
+        if (!shouldSolve || obj.innerHTML !== emptyChar) {
             shouldSolve = true;
+        }
     });
     if (shouldSolve) {
         smarterBruteForceAlgorithm();
-        stringToBoard(array.map(x => x.value).join(''));
+        stringToBoard(array.map(x => x.value).join(''), false);
         array = [];
         array.length = 0;
     } else {
@@ -141,10 +146,11 @@ function solve() {
 /**
  * Check if two given cells can "see" (i.e. in a straight line,
  * or in the same square) each other
+ * @return {boolean}
  */
 function isPeer(c1, c2) {
-    var l = 9;
-    var b = 3; // Needs a value!
+    const l = 9;
+    const b = 3; // Needs a value!
     return (Math.floor(c1 / l) == Math.floor(c2 / l))           // Same row
         || (c1 % l == c2 % l)                                   // Same column
         || ((Math.floor(c1 / l / b) == Math.floor(c2 / l / b)   // Same square
@@ -155,9 +161,10 @@ function isPeer(c1, c2) {
 /**
  * Return an array with all the cells that are peers of the
  * desired element
+ * @return {number[]}
  */
 function getPeers(index) {
-    var peers = [];
+    let peers = [];
     array.forEach(function (o, i) {
         if (isPeer(index, i) && !array.includes(i)) {
             peers.push(i);
@@ -169,10 +176,11 @@ function getPeers(index) {
 /**
  * Check if the passed index has generated a coflict
  * @param {number} index - It should always be the last number inserted in the sudoku
+ * @return {boolean}
  */
 function hasConflict(index) {
-    var peers = getPeers(index);
-    var peerValues = [];
+    let peers = getPeers(index);
+    let peerValues = [];
     peers.forEach(function (o, i) {
         peerValues.push(Number(array[o].value));
     });
@@ -180,7 +188,7 @@ function hasConflict(index) {
 }
 
 /**
- * 
+ * Each cell of the sudoku
  */
 class Cell {
     /**
@@ -195,19 +203,16 @@ class Cell {
     }
 };
 
-
-var array = [];
-
 /**
  * Check every possible value
  */
 function smarterBruteForceAlgorithm() {
-    var index = 0;
-    var endReached = false;
-    var isBack = false;
+    let index = 0;
+    let endReached = false;
+    let isBack = false;
 
-    for (var i = 0; i < 9 * 9; ++i) {
-        var val = $(`.col${String(i % 9)}.row${String(Math.floor(i / 9))}`).html()
+    for (let i = 0; i < 9 * 9; ++i) {
+        let val = $(`.col${String(i % 9)}.row${String(Math.floor(i / 9))}`).html()
         array.push(new Cell(Number(val != emptyChar ? val : 0)));
     }
     while (!endReached) {
