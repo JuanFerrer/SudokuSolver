@@ -2,8 +2,8 @@
  * Deselect all
  */
 function clearSelection() {
-    $(".square.ui-selected").each(function () {
-        $(this).removeClass("ui-selected");
+    $('.square.ui-selected').each(function () {
+        $(this).removeClass('ui-selected');
     })
 }
 
@@ -11,15 +11,14 @@ function clearSelection() {
  * Check the board and mark conflicts
  */
 function checkBoard() {
-    $("." + conflictClass).removeClass(conflictClass);
+    $('.' + conflictClass).removeClass(conflictClass);
     var cols = [];
     var rows = [];
     // Check for duplicates in the current row
     for (var i = 0; i < 9; ++i) {
-        rows = $(".row" + i).toArray();
+        rows = $('.row' + i).toArray();
         for (var j = 0; j < 9; ++j) {
             for (var k = 0; k < 9; ++k) {
-                // console.log(rows[k].innerHTML + "===" + rows[j].innerHTML);
                 if (rows[j].innerHTML === rows[k].innerHTML &&
                     rows[j].innerHTML !== emptyChar &&
                     rows[k].innerHTML !== emptyChar &&
@@ -30,7 +29,7 @@ function checkBoard() {
             }
         }
         // Check for duplicates in the current column
-        cols = $(".col" + i).toArray();
+        cols = $('.col' + i).toArray();
         for (j = 0; j < 9; ++j) {
             for (k = 0; k < 9; ++k) {
                 if (cols[j].innerHTML === cols[k].innerHTML &&
@@ -46,7 +45,7 @@ function checkBoard() {
     // Check for duplicates in the current square container
     var squares = [];
     for (i = 0; i < 9; ++i) {
-        squares = $(".square" + i).children().toArray();
+        squares = $('.square' + i).children().toArray();
         for (j = 0; j < 9; ++j) {
             for (k = j + 1; k < 9; ++k) {
                 if (squares[j].innerHTML === squares[k].innerHTML &&
@@ -68,10 +67,10 @@ function stringToBoard(sudokuString) {
     p = sudokuString.replace(/0/g, emptyChar)
     clearBoard();
     for (var i = 0, num = 0; i < 9; ++i) {
-        $(".row" + i).html(function () {
+        $(`.row${i}`).html(function () {
             // If the character going into the square is not emptyChar, add fromSourceClass
             if (p[num] != emptyChar) {
-                $(".row" + i + ".col" + num % 9).addClass(fromSourceClass);
+                $(`.row${i}.col${num % 9}`).addClass(fromSourceClass);
             }
             // Either way, return the character
             return p[num++];
@@ -83,11 +82,11 @@ function stringToBoard(sudokuString) {
  * Read sudoku string from player to populate board
  */
 function populateBoard() {
-    var str = prompt("Paste the Sudoku string:", "");
+    var str = prompt('Paste the Sudoku string:', '');
     if (!str.match(/\D/i)) {
         stringToBoard(str);
     } else {
-        alert("Make sure the Sudoku string has the right format");
+        alert('Make sure the Sudoku string has the right format');
     }
 
 }
@@ -96,10 +95,10 @@ function populateBoard() {
  * Clear the board
  */
 function clearBoard() {
-    $(".square").removeClass(conflictClass);
-    $(".square").removeClass(fromSourceClass);
+    $('.square').removeClass(conflictClass);
+    $('.square').removeClass(fromSourceClass);
     for (var i = 0; i < 9; ++i) {
-        $(".row" + i).html(function () { return emptyChar; });
+        $(`.row${i}`).html(function () { return emptyChar; });
     }
 }
 
@@ -107,9 +106,9 @@ function clearBoard() {
  * Remove player modifications from the board
  */
 function resetBoard() {
-    $(".square").removeClass(conflictClass);
+    $('.square').removeClass(conflictClass);
     for (var i = 0; i < 9; ++i) {
-        $(".row" + i + ":not(." + fromSourceClass + ")").html(function () { return emptyChar; });
+        $(`.row${i}:not(.${fromSourceClass})`).html(function () { return emptyChar; });
     }
 }
 
@@ -121,17 +120,17 @@ function solve() {
     resetBoard();
     // Return if board is empty
     var shouldSolve;
-    $(".square").each(function (i, obj) {
+    $('.square').each(function (i, obj) {
         if (obj.innerHTML != emptyChar)
             shouldSolve = true;
     });
     if (shouldSolve) {
         smarterBruteForceAlgorithm();
-        stringToBoard(array.map(x => x.value).join(""));
+        stringToBoard(array.map(x => x.value).join(''));
         array = [];
         array.length = 0;
     } else {
-        alert("Empty board. Can't solve that!");
+        alert('Empty board. Can\'t solve that!');
     }
 }
 
@@ -208,7 +207,7 @@ function smarterBruteForceAlgorithm() {
     var isBack = false;
 
     for (var i = 0; i < 9 * 9; ++i) {
-        var val = $(".col" + String(i % 9) + ".row" + String(Math.floor(i / 9))).html()
+        var val = $(`.col${String(i % 9)}.row${String(Math.floor(i / 9))}`).html()
         array.push(new Cell(Number(val != emptyChar ? val : 0)));
     }
     while (!endReached) {
@@ -220,7 +219,7 @@ function smarterBruteForceAlgorithm() {
 
             if (!hasConflict(index)) {
                 index++;
-                if (index == array.length - 1)
+                if (index > array.length - 1)
                     endReached = true;
                 isBack = false;
             } else {
@@ -228,7 +227,7 @@ function smarterBruteForceAlgorithm() {
                     isBack = true;
                     if (index == 0) {
                         endReached = true;
-                        console.log("No solution could be found");
+                        console.log('No solution could be found');
                     }
                 }
             }
