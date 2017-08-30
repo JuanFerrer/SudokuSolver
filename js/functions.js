@@ -64,7 +64,8 @@ function checkBoard() {
 
 /**
  * Fill the board with the given sudoku string
- * @param {string} sudokuString 
+ * @param {string} sudokuString 81 digit string
+ * @param {boolean} fromUser Optional. Whether the string comes from the user or not
  */
 function stringToBoard(sudokuString, fromUser = true) {
     p = sudokuString.replace(/0/g, emptyChar)
@@ -80,6 +81,19 @@ function stringToBoard(sudokuString, fromUser = true) {
             return p[num++];
         });
     }
+}
+
+/**
+ * Make a sudoku string from the board
+ * @return {string}
+ */
+function boardToString() {
+    let boardArr = [];
+    for (let i = 0; i < 9 * 9; ++i) {
+        let val = $(`.col${String(i % 9)}.row${String(Math.floor(i / 9))}`).html()
+        boardArr.push((val != emptyChar ? val : 0));
+    }
+    return boardArr.join('')
 }
 
 /**
@@ -120,8 +134,12 @@ function resetBoard() {
  * Brute force the puzzle
  */
 function solve() {
-    // First reset
+    // Get string,
+    let sudokuString = boardToString();
+    // reset board
     resetBoard();
+    // and populate
+    stringToBoard(sudokuString);
     // Return if board is empty
     let shouldSolve = false;
     $('.square').each(function (i, obj) {
@@ -129,7 +147,13 @@ function solve() {
             shouldSolve = true;
         }
     });
-    if (shouldSolve) {
+
+    // And make sure we're not trying to solve something impossible
+    if (hasConflict(-1, Array.from(sudokuString))) {
+        alert('There are conflicts on the given string');
+    }
+    // All good, then carry on
+    else if (shouldSolve) {
         smarterBruteForceAlgorithm();
         stringToBoard(array.map(x => x.value).join(''), false);
         array = [];
@@ -161,12 +185,14 @@ function isPeer(c1, c2) {
 /**
  * Return an array with all the cells that are peers of the
  * desired element
+ * @param index Index to check
+ * @param a Array where the check is being applied
  * @return {number[]}
  */
-function getPeers(index) {
+function getPeers(index, a) {
     let peers = [];
-    array.forEach(function (o, i) {
-        if (isPeer(index, i) && !array.includes(i)) {
+    a.forEach(function (o, i) {
+        if (isPeer(index, i) && !a.includes(i)) {
             peers.push(i);
         }
     })
@@ -174,17 +200,29 @@ function getPeers(index) {
 }
 
 /**
- * Check if the passed index has generated a coflict
- * @param {number} index - It should always be the last number inserted in the sudoku
+ * Check if the passed index has generated a conflict
+ * @param {number} i Index to check. -1 Checks for the whole array
+ * @param {number[]} a Array where the check is being applied
  * @return {boolean}
  */
-function hasConflict(index) {
-    let peers = getPeers(index);
-    let peerValues = [];
-    peers.forEach(function (o, i) {
-        peerValues.push(Number(array[o].value));
-    });
-    return peerValues.countOcurrencesOf(array[index].value) > 1;
+function hasConflict(i, a) {
+    if (i == -1) {
+        let conflictCheckResult = false;
+        a.forEach((v, index) => {
+            if (hasConflict(index, a))
+                conflictCheckResult = true;
+        });
+        return conflictCheckResult;
+    } else {
+        if (Number(a[i]) !== 0) {
+            let peers = getPeers(i, a);
+            let peerValues = [];
+            peers.forEach(function (o) {
+                peerValues.push(Number(a[o].value || a[o]));
+            });
+            return peerValues.countOcurrencesOf(Number(a[i].value || (a[i]))) > 1;
+        }
+    }
 }
 
 /**
@@ -193,8 +231,8 @@ function hasConflict(index) {
 class Cell {
     /**
      * 
-     * @param {number} value - Value of the cell taken from the array
-     * @param {number} index - Index in the array
+     * @param {number} value Value of the cell taken from the array
+     * @param {number} index Index in the array
      */
     constructor(value) {
         this.numTried = 0;
@@ -222,7 +260,7 @@ function smarterBruteForceAlgorithm() {
         else if (array[index].value < 9 && !array[index].isFromSource) {
             array[index].value = ++array[index].numTried;
 
-            if (!hasConflict(index)) {
+            if (!hasConflict(index, array)) {
                 index++;
                 if (index > array.length - 1)
                     endReached = true;
